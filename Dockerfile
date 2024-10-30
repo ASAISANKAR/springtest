@@ -1,15 +1,14 @@
-# Use the Eclipse alpine official image
-# https://hub.docker.com/_/eclipse-temurin
-FROM eclipse-temurin:21-jdk-alpine
+# Use a base image with JDK 17 (or match your Java version)
+FROM openjdk:17-jdk-slim
 
-# Create and change to the app directory.
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy files to the container image
-COPY . ./
+# Copy the packaged JAR file into the container
+COPY target/springboot.jar app.jar
 
-# Build the app.
-RUN ./mvnw -DoutputFile=target/mvn-dependency-list.log -B -DskipTests clean dependency:list install
+# Expose the port your application runs on (default is 8080)
+EXPOSE 8080
 
-# Run the app by dynamically finding the JAR file in the target directory
-CMD ["sh", "-c", "java -jar target/*.jar"]
+# Set the entry point to run the jar file
+ENTRYPOINT ["java", "-jar", "app.jar"]
